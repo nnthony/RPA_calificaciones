@@ -97,6 +97,30 @@
           <input type="number" id="numero_ejercicio" name="numero_ejercicio" required>
           <button type="submit">Mostrar Detalle</button>
         </form>
+        <table border="0" cellspacing="0" cellpadding="5">
+          <thead>
+              <tr>
+                  <th>Criterio</th>
+                  <th>Correctitud</th>
+                  <th>Eficiencia</th>
+                  <th>Legibilidad</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td>Descripción</td>
+                  <td>Evalúa si el código produce los resultados esperados y cumple con los requisitos especificados.</td>
+                  <td>Mide la eficacia del código en términos de tiempo y espacio de ejecución.</td>
+                  <td>Valora la claridad, organización y documentación del código.</td>
+              </tr>
+              <tr>
+                  <td>Proporción de Puntaje</td>
+                  <td>60%</td>
+                  <td>25%</td>
+                  <td>15%</td>
+              </tr>
+          </tbody>
+        </table>
   
       <!-- Mostrar la tabla de calificaciones si existen resultados -->
       {% if detalle %}
