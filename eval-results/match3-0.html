@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>4.py</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script type="text/javascript">
+  <!--
+   function ZweiFrames(URL1,F1,URL2,F2)
+   {
+    parent.frames[F1].location.href=URL1;
+    parent.frames[F2].location.href=URL2;
+   }
+  //-->
+  </script>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<HR>
+<H3><CENTER>4.py</CENTER></H3><HR>
+<PRE>
+<A NAME="0"></A><FONT color="#0000ff"><A HREF="javascript:ZweiFrames('match3-1.html#0',3,'match3-top.html#0',1)"><IMG SRC="forward.gif" ALT="other" BORDER="0" ALIGN="right"></A><B>def eliminar_mayor_menor_alt(num):
+    # Inicializamos variables
+    mayor = -1
+    menor = 10
+    resultado = 0
+    factor = 1
+    original = num
+
+    # Encontrar el mayor y menor dígito en una sola pasada
+    while num &gt; 0:
+        digito = num % 10
+        if digito &gt; mayor:
+            mayor = digito
+        if digito &lt; menor:
+            menor = digito
+        num //= 10
+
+    # Resetear num para la segunda pasada
+    num = original
+
+    # Eliminar el mayor y menor dígito
+    while num &gt; 0:
+        digito = num % 10
+        # Si el dígito no es el mayor o menor, se agrega al resultado
+        if digito != mayor and digito != menor:
+            resultado = resultado + digito * factor
+            factor *= 10
+        num //= 10
+
+    return resultado
+
+# Programa principal
+numero = int(input(&quot;Ingrese un número entero positivo (más de 4 dígitos): &quot;))
+
+if numero &gt; 9999:  # Verificar que el número tenga más de 4 dígitos
+    numero_modificado = eliminar_mayor_menor_alt(numero)
+    print(&quot;Número modificado:&quot;, numero_modificado)
+else:
+    print(</B></FONT>&quot;El número debe tener más de 4 dígitos.&quot;)
+</PRE>
+
+</BODY>
+</HTML>

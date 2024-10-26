@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA de Calificaciones de Python</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+<body>
+    <div class="title-container">
+    <img src="{{ url_for('static', filename='icono.png') }}" alt="Icono RPA" class="title-icon">
+    
+    <h1>RPA para Calificar Evaluaciones</h1>
+    </div>
+    <br>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('set_evaluation_type') }}">
+          <label for="t_evaluacion">Tipo de evaluación:</label>
+          <input list="opciones" id="opcion" name="t_evaluacion" placeholder="Elige una opción" required>
+          
+          <datalist id="opciones">
+              <option value="PC1">
+              <option value="PC2">
+              <option value="PC3">
+              <option value="PC4">
+              <option value="EP">
+              <option value="EF">
+              <option value="ES">
+          </datalist>
+          
+          <button type="submit">Seleccionar Evaluación</button>
+        </form>
+
+        {% if t_evaluacion %}
+        <h2>Evaluación seleccionada: {{  t_evaluacion  }}</h2>
+        <br>
+        {% endif %}
+
+        <!-- Subir imágenes de los ejercicios -->
+        <form method="POST" action="{{ url_for('upload_evaluation') }}" enctype="multipart/form-data">
+          <label for="evaluation_images">Subir imágenes de los ejercicios:</label>
+          <div class="file-upload-wrapper">
+              <input type="file" id="evaluation_images" name="evaluation_images" multiple required>
+              <button type="button" class="file-upload-button">Escoger Archivos</button>
+              <div class="file-upload-names" id="file-upload-evaluation-names"></div>
+          </div>
+          <button type="submit">Cargar Evaluación</button>
+        </form>
+
+        <!-- Subida de códigos de alumnos -->
+        <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
+          <label for="code_files">Subir códigos de los alumnos (.py):</label>
+          <div class="file-upload-wrapper">
+              <input type="file" id="code_files" name="code_files" multiple required>
+              <button type="button" class="file-upload-button">Escoger Archivos</button>
+              <div class="file-upload-names" id="file-upload-code-names"></div>
+          </div>
+          <button type="submit">Cargar Códigos</button>
+        </form>
+
+        
+
+        <form method="POST" action="{{ url_for('start_grading') }}">
+            <label for="exercise_number">Número de ejercicio:</label>
+            <input type="text" name="exercise_number" required>
+            <button type="submit">Iniciar Calificación</button>
+        </form>
+
+        <p><b>Análisis de Plagio</b></p>
+        <form action="{{ url_for('run_jplag') }}" method="POST">
+            <button type="submit">Ejecutar Análisis de Plagio</button>
+        </form>
+
+
+        <ul>
+          {% for comparison in comparisons %}
+              <li>{{ comparison }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>Revisión de Notas</h2>
+
+        <form action="{{ url_for('analisis') }}" method="POST">
+          <label for="numero_ejercicio">Número de Ejercicio:</label>
+          <input type="number" id="numero_ejercicio" name="numero_ejercicio" required>
+          <button type="submit">Mostrar Detalle</button>
+        </form>
+  
+      <!-- Mostrar la tabla de calificaciones si existen resultados -->
+      {% if detalle %}
+          <h3>Calificaciones para Evaluación: {{ t_evaluacion }}, Ejercicio: {{ numero_ejercicio }}</h3>
+          <table border="0">
+              <tr>
+                  <th>Alumno</th>
+                  <th>Criterio 1</th>
+                  <th>Criterio 2</th>
+                  <th>Criterio 3</th>
+                  <th>Total</th>
+              </tr>
+              {% for cal in detalle %}
+              <tr>
+                  <td>{{ cal[1] }}</td>
+                  <td>{{ cal[2] }}</td>
+                  <td>{{ cal[3] }}</td>
+                  <td>{{ cal[4] }}</td>
+                  <td>{{ cal[5] }}</td>
+              </tr>
+              {% endfor %}
+          </table>
+      {% endif %}
+  
+
+        <form action="/insertar_calificaciones" method="POST">
+          <button type="submit">Insertar calificaciones</button>
+        </form>
+
+        <p><b>Calificaciones de Alumnos</b></p>
+    
+        <!-- Formulario con botón para enviar solicitud POST -->
+        <form action="/calificaciones" method="POST">
+            <button type="submit">Mostrar Calificaciones</button>
+        </form>
+        
+    
+        {% if calificaciones %}
+        <b>Notas de {{  t_evaluacion  }}</b>
+        <br>
+        <table id="dataTable" border="0">
+            <thead>
+                <tr>
+                    <th >ID <span onclick="sortTables(0)" class="sort-icon">&#9650;</span></th>
+                    <th >Nombre Completo <span onclick="sortTables(1)" class="sort-icon">&#9650;</span></th>
+                    <th >Correo <span onclick="sortTables(2)" class="sort-icon">&#9650;</span></th>
+                    <th >Ejercicio 1 <span onclick="sortTables(3)" class="sort-icon">&#9650;</span></th>
+                    <th >Ejercicio 2 <span onclick="sortTables(4)" class="sort-icon">&#9650;</span></th>
+                    <th >Ejercicio 3<span onclick="sortTables(5)" class="sort-icon">&#9650;</span></th>
+                    <th >Nota Total<span onclick="sortTables(6)" class="sort-icon">&#9650;</span></th>
+            </thead>
+            <tbody>
+                {% for calificacion in calificaciones %}
+                <tr>
+                    <td>{{ calificacion[0] }}</td>
+                    <td>{{ calificacion[1] }}</td>
+                    <td>{{ calificacion[2] }}</td>
+                    <td>{{ calificacion[3] }}</td>
+                    <td>{{ calificacion[4] }}</td>
+                    <td>{{ calificacion[5] }}</td>
+                    <td>{{ calificacion[6] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        {% endif %}
+    </div>
+<script src="{{ url_for('static', filename='fileUpload.js') }}"></script>
+<script src="{{ url_for('static', filename='sortTables.js') }}"></script>
+</body>
+</html>
