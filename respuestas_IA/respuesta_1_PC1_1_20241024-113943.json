@@ -1,0 +1,30 @@
+{
+    "id": "chatcmpl-ALv9t70zUya4VZTbNVMRxJhWsjSlg",
+    "object": "chat.completion",
+    "created": 1729787969,
+    "model": "gpt-4o-2024-08-06",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "INSERT INTO detalle (id_alumno, eval, numero_ejercicio, respuesta, C1, C2, C3, Total, comentario) VALUES (1, 'PC1', 1, 'def sumar_base8(num1, num2):\\n    resultado = 0\\n    potencia = 1\\n    acarreo = 0\\n\\n    while num1 > 0 or num2 > 0 or acarreo > 0:\\n        digito1 = num1 % 10\\n        digito2 = num2 % 10\\n        suma_digitos = digito1 + digito2 + acarreo\\n\\n        if suma_digitos >= 8:\\n            acarreo = 1\\n            suma_digitos -= 8\\n        else:\\n            acarreo = 0\\n\\n        resultado += suma_digitos * potencia\\n        potencia *= 10\\n        num1 //= 10\\n        num2 //= 10\\n\\n    return resultado\\n\\ndef es_capicua(numero):\\n    original = numero\\n    invertido = 0\\n\\n    while numero > 0:\\n        invertido = invertido * 10 + numero % 10\\n        numero //= 10\\n\\n    return original == invertido\\n\\n# Ejemplos de uso\\nnum1 = 575  # en base 8\\nnum2 = 636  # en base 8\\n\\nresultado = sumar_base8(num1, num2)\\nprint(f\"Resultado de la suma en base 8: {resultado}\")\\n\\nif es_capicua(resultado):\\n    print(f\"{resultado} es capic\u00c3\u00baa en base 8\")\\nelse:\\n    print(f\"{resultado} no es capic\u00c3\u00baa en base 8\")\\n', 0.3, 0.1, 0.07, 0.47, 'C1: El algoritmo parece sumar correctamente n\u00fameros en base 8, pero utiliza decisiones (if) y procesa los n\u00fameros en representaci\u00f3n decimal, sin manejar correctamente las restricciones base 8 dado el enunciado. C2: La implementaci\u00f3n es aceptable en t\u00e9rminos de eficiencia, pero puede ser optimizada eliminando algunas redundancias. C3: La legibilidad es decente, pero m\u00e1s comentarios y una funci\u00f3n compacta podr\u00edan mejorar la claridad.')",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 1535,
+        "completion_tokens": 497,
+        "total_tokens": 2032,
+        "prompt_tokens_details": {
+            "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+            "reasoning_tokens": 0
+        }
+    },
+    "system_fingerprint": "fp_90354628f2"
+}
