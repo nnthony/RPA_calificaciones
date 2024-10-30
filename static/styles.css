@@ -7,9 +7,10 @@
 }
 
 .title-icon {
-    width: 100px;  /* Cambia el tamaño según sea necesario */
+    width: 100px;  
     height: 100px;
-    margin-right: 15px;  /* Espacio entre la imagen y el título */
+    margin-right: 15px; 
+    filter: drop-shadow(3px 6px 3px rgba(0, 0, 0, 0.3));
 }
 
 
@@ -46,6 +47,21 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.three-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+
+/* Columnas internas */
+.column {
+    padding: 20px;
+    flex: 1; /* Hace que cada columna ocupe el mismo espacio */
+    text-align: justify;
 }
 
 form {

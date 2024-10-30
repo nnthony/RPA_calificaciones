@@ -18,7 +18,6 @@ openai.api_key = app.config['OPENAI_API_KEY']
 
 # Inicializar MySQL
 mysql = init_mysql(app)
-x=0
 # Carpeta para cargar archivos
 UPLOAD_FOLDER = 'uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -46,6 +45,11 @@ def set_evaluation_type():
     
     t_evaluacion = request.form.get('t_evaluacion')
     session['t_evaluacion'] = t_evaluacion  # Guardar en sesión
+    UPLOAD_FOLDER = f'uploads/{t_evaluacion}/'
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    EVAL_FOLDER = f'eval/{t_evaluacion}/'
+    app.config['EVAL_FOLDER'] = EVAL_FOLDER
+    print(session)
     flash("Se declaró correctamente el tipo de evaluación")
     return redirect(url_for('index'))  # Redirigir a una página, o donde prefieras
 
@@ -59,7 +63,6 @@ def upload_evaluation():
         return redirect(request.url)
 
     files = request.files.getlist('evaluation_images')
-    
     if not files:
         flash('No se seleccionaron archivos')
         return redirect(request.url)
@@ -124,13 +127,18 @@ def upload_codes():
     if 't_evaluacion' in session:  # Verifica si t_evaluacion está en la sesión
         t_evaluacion = session['t_evaluacion']
     files = request.files.getlist('code_files')
+    exercise_number = str(request.form.get('exercise'))
+    if not exercise_number:
+        flash('Problema para subir archivos.')
+        return redirect(url_for('index'))
+    dir = f'eval/{t_evaluacion}/{exercise_number}/'
 
     for file in files:
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['EVAL_FOLDER'], filename))
+            file.save(os.path.join(dir, filename))
 
-    flash('Códigos subidos correctamente.')
+    flash(f'Códigos del <b>Ejercicio {exercise_number}</b> subidos correctamente.')
     return redirect(url_for('index'))
 
 

@@ -19,7 +19,7 @@
       {% if messages %}
         <ul class="flash-messages">
         {% for message in messages %}
-          <li>{{ message }}</li>
+          <li>{{ message | safe }}</li>
         {% endfor %}
         </ul>
       {% endif %}
@@ -58,18 +58,50 @@
           </div>
           <button type="submit">Cargar Evaluación</button>
         </form>
-
-        <!-- Subida de códigos de alumnos -->
-        <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
-          <label for="code_files">Subir códigos de los alumnos (.py):</label>
-          <div class="file-upload-wrapper">
-              <input type="file" id="code_files" name="code_files" multiple required>
-              <button type="button" class="file-upload-button">Escoger Archivos</button>
-              <div class="file-upload-names" id="file-upload-code-names"></div>
-          </div>
-          <button type="submit">Cargar Códigos</button>
-        </form>
-
+        <div class="three-columns">
+            <div class="column">
+                <h3>Ejercicio 1</h3>
+                <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="exercise" value="1">
+                    <label for="code_files_1">Subir códigos de los alumnos (.py):</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="code_files_1" name="code_files" multiple required data-display="file-upload-code-names-1">
+                        <button type="button" class="file-upload-button">Escoger Archivos</button>
+                        <div class="file-upload-names" id="file-upload-code-names-1"></div>
+                    </div>
+                    <button type="submit">Cargar Códigos</button>
+                </form>
+            </div>
+            
+            <div class="column">
+                <h3>Ejercicio 2</h3>
+                <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="exercise" value="2">
+                    <label for="code_files_2">Subir códigos de los alumnos (.py):</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="code_files_2" name="code_files" multiple required data-display="file-upload-code-names-2">
+                        <button type="button" class="file-upload-button">Escoger Archivos</button>
+                        <div class="file-upload-names" id="file-upload-code-names-2"></div>
+                    </div>
+                    <button type="submit">Cargar Códigos</button>
+                </form>
+            </div>
+            
+            <div class="column">
+                <h3>Ejercicio 3</h3>
+                <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="exercise" value="3">
+                    <label for="code_files_3">Subir códigos de los alumnos (.py):</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="code_files_3" name="code_files" multiple required data-display="file-upload-code-names-3">
+                        <button type="button" class="file-upload-button">Escoger Archivos</button>
+                        <div class="file-upload-names" id="file-upload-code-names-3"></div>
+                    </div>
+                    <button type="submit">Cargar Códigos</button>
+                </form>
+            </div>
+        </div>
+        
         
 
         <form method="POST" action="{{ url_for('start_grading') }}">
