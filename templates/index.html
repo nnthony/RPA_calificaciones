@@ -50,59 +50,49 @@
 
         <!-- Subir imágenes de los ejercicios -->
         <form method="POST" action="{{ url_for('upload_evaluation') }}" enctype="multipart/form-data">
-          <label for="evaluation_images">Subir imágenes de los ejercicios:</label>
-          <div class="file-upload-wrapper">
-              <input type="file" id="evaluation_images" name="evaluation_images" multiple required>
-              <button type="button" class="file-upload-button">Escoger Archivos</button>
-              <div class="file-upload-names" id="file-upload-evaluation-names"></div>
-          </div>
-          <button type="submit">Cargar Evaluación</button>
+            <label for="evaluation_images">Subir imágenes de los ejercicios:</label>
+            <div class="file-upload-wrapper">
+                <input type="file" id="evaluation_images" name="evaluation_images" multiple required data-display="file-upload-evaluation-names">
+                <button type="button" class="file-upload-button">Escoger Archivos</button>
+                <div class="file-upload-names" id="file-upload-evaluation-names"></div>
+            </div>
+            <button type="submit">Cargar Evaluación</button>
         </form>
-        <div class="three-columns">
-            <div class="column">
-                <h3>Ejercicio 1</h3>
-                <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
-                    <input type="hidden" name="exercise" value="1">
+
+        <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
+            <div class="three-columns">
+                <div class="column">
+                    <h3>Ejercicio 1</h3>
                     <label for="code_files_1">Subir códigos de los alumnos (.py):</label>
                     <div class="file-upload-wrapper">
-                        <input type="file" id="code_files_1" name="code_files" multiple required data-display="file-upload-code-names-1">
-                        <button type="button" class="file-upload-button">Escoger Archivos</button>
+                        <input type="file" id="code_files_1" name="code_files_1" multiple required style="display: none;" data-display="file-upload-code-names-1">
+                        <label for="code_files_1" class="file-upload-button">Escoger Archivos</label>
                         <div class="file-upload-names" id="file-upload-code-names-1"></div>
                     </div>
-                    <button type="submit">Cargar Códigos</button>
-                </form>
-            </div>
-            
-            <div class="column">
-                <h3>Ejercicio 2</h3>
-                <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
-                    <input type="hidden" name="exercise" value="2">
+                </div>
+                
+                <div class="column">
+                    <h3>Ejercicio 2</h3>
                     <label for="code_files_2">Subir códigos de los alumnos (.py):</label>
                     <div class="file-upload-wrapper">
-                        <input type="file" id="code_files_2" name="code_files" multiple required data-display="file-upload-code-names-2">
-                        <button type="button" class="file-upload-button">Escoger Archivos</button>
+                        <input type="file" id="code_files_2" name="code_files_2" multiple required style="display: none;" data-display="file-upload-code-names-2">
+                        <label for="code_files_2" class="file-upload-button">Escoger Archivos</label>
                         <div class="file-upload-names" id="file-upload-code-names-2"></div>
                     </div>
-                    <button type="submit">Cargar Códigos</button>
-                </form>
-            </div>
-            
-            <div class="column">
-                <h3>Ejercicio 3</h3>
-                <form method="POST" action="{{ url_for('upload_codes') }}" enctype="multipart/form-data">
-                    <input type="hidden" name="exercise" value="3">
+                </div>
+                
+                <div class="column">
+                    <h3>Ejercicio 3</h3>
                     <label for="code_files_3">Subir códigos de los alumnos (.py):</label>
                     <div class="file-upload-wrapper">
-                        <input type="file" id="code_files_3" name="code_files" multiple required data-display="file-upload-code-names-3">
-                        <button type="button" class="file-upload-button">Escoger Archivos</button>
+                        <input type="file" id="code_files_3" name="code_files_3" multiple required style="display: none;" data-display="file-upload-code-names-3">
+                        <label for="code_files_3" class="file-upload-button">Escoger Archivos</label>
                         <div class="file-upload-names" id="file-upload-code-names-3"></div>
                     </div>
-                    <button type="submit">Cargar Códigos</button>
-                </form>
+                </div>
             </div>
-        </div>
-        
-        
+            <button type="submit">Cargar Códigos</button>
+        </form>
 
         <form method="POST" action="{{ url_for('start_grading') }}">
             <label for="exercise_number">Número de ejercicio:</label>
@@ -110,17 +100,45 @@
             <button type="submit">Iniciar Calificación</button>
         </form>
 
+        <form action="/insertar_calificaciones" method="POST">
+            <button type="submit">Insertar calificaciones</button>
+        </form>
+
         <p><b>Análisis de Plagio</b></p>
         <form action="{{ url_for('run_jplag') }}" method="POST">
             <button type="submit">Ejecutar Análisis de Plagio</button>
         </form>
 
-
-        <ul>
-          {% for comparison in comparisons %}
-              <li>{{ comparison }}</li>
-          {% endfor %}
-        </ul>
+        {% if results %}
+        <div class="three-columns">
+            <div class="column">
+                <h3>Ejercicio 1</h3>
+                <ul>
+                    {% for comparison in results[0] %}
+                        <li>{{ comparison }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="column">
+                <h3>Ejercicio 2</h3>
+                <ul>
+                    {% for comparison in results[1] %}
+                        <li>{{ comparison }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="column">
+                <h3>Ejercicio 3</h3>
+                <ul>
+                    {% for comparison in results[2] %}
+                        <li>{{ comparison }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
 
         <h2>Revisión de Notas</h2>
 
@@ -176,20 +194,14 @@
               {% endfor %}
           </table>
       {% endif %}
-  
-
-        <form action="/insertar_calificaciones" method="POST">
-          <button type="submit">Insertar calificaciones</button>
-        </form>
-
+        
         <p><b>Calificaciones de Alumnos</b></p>
     
         <!-- Formulario con botón para enviar solicitud POST -->
         <form action="/calificaciones" method="POST">
             <button type="submit">Mostrar Calificaciones</button>
         </form>
-        
-    
+            
         {% if calificaciones %}
         <b>Notas de {{  t_evaluacion  }}</b>
         <br>

@@ -12,9 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fileNames += files[i].name + (i < files.length - 1 ? ', ' : '');
             }
 
-            if (displayElement) {
-                displayElement.textContent = fileNames;
-            }
+            displayElement.textContent = fileNames;
         });
     });
 });

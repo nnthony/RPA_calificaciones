@@ -124,21 +124,25 @@ def upload_evaluation():
 # Ruta para manejar la carga de códigos de los alumnos
 @app.route('/upload_codes', methods=['POST'])
 def upload_codes():
-    if 't_evaluacion' in session:  # Verifica si t_evaluacion está en la sesión
+    if 't_evaluacion' in session:
         t_evaluacion = session['t_evaluacion']
-    files = request.files.getlist('code_files')
-    exercise_number = str(request.form.get('exercise'))
-    if not exercise_number:
-        flash('Problema para subir archivos.')
-        return redirect(url_for('index'))
-    dir = f'eval/{t_evaluacion}/{exercise_number}/'
 
-    for file in files:
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(dir, filename))
+    # Diccionario para cada ejercicio y su respectiva lista de archivos
+    exercises = {
+        '1': request.files.getlist('code_files_1'),
+        '2': request.files.getlist('code_files_2'),
+        '3': request.files.getlist('code_files_3')
+    }
 
-    flash(f'Códigos del <b>Ejercicio {exercise_number}</b> subidos correctamente.')
+    # Procesa cada conjunto de archivos
+    for exercise_number, files in exercises.items():
+        dir = f'eval/{t_evaluacion}/{exercise_number}/'
+        for file in files:
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(dir, filename))
+
+    flash('Archivos subidos correctamente para todos los ejercicios.')
     return redirect(url_for('index'))
 
 
@@ -175,29 +179,37 @@ def start_grading():
 def run_jplag():
     if 't_evaluacion' in session:  # Verifica si t_evaluacion está en la sesión
         t_evaluacion = session['t_evaluacion']
-    # Ejecutar JPlag en consola dentro de subprocess
-    command = ['java', '-jar', 'jplag.jar', '-l', 'python3', '-s', './eval', '-r', './eval-results']
-    result = subprocess.run(command, capture_output=True, text=True)
-    output = result.stdout # Salida del comando
-    # Crear una lista para almacenar los resultados formateados
-    comparisons = []
-    # Dividir la salida en líneas
-    lines = output.splitlines()
     
-    for line in lines:
-        # Filtrar solo las líneas que contienen comparaciones
-        if "Comparing" in line:
-            # Extraer los valores
-            parts = line.split(":")
-            comparison = parts[0].replace("Comparing ", "").strip()  # Eliminar "Comparing "
-            percentage = float(parts[1].strip())  # Extraer el porcentaje
+    results = []  # Lista para almacenar los resultados de cada ejercicio
 
-            # Solo agregar comparaciones con porcentaje mayor a 0
-            if percentage > 0:
-                comparisons.append(f"Análisis entre {comparison}: {percentage:.1f}%")
+    # Definir las carpetas a analizar
+    for i in range(1, 4):  # Para ejercicios 1, 2 y 3
+        command = [
+            'java', '-jar', 'jplag.jar', 
+            '-l', 'python3', 
+            '-s', f'./eval/{t_evaluacion}/{i}/', 
+            '-r', f'./eval/{t_evaluacion}/eval-results-{i}/'
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+        output = result.stdout  # Salida del comando
+        
+        # Crear una lista para almacenar los resultados formateados para este ejercicio
+        comparisons = []
+        lines = output.splitlines()
+        
+        for line in lines:
+            if "Comparing" in line:
+                parts = line.split(":")
+                comparison = parts[0].replace("Comparing ", "").strip()
+                percentage = float(parts[1].strip())
+                
+                if percentage > 0:
+                    comparisons.append(f"Análisis entre {comparison}: {percentage:.1f}%")
 
+        results.append(comparisons)  # Agregar los resultados de este ejercicio
 
-    return render_template('index.html', comparisons=comparisons, t_evaluacion=t_evaluacion)
+    return render_template('index.html', results=results, t_evaluacion=t_evaluacion)
+
 
 
 # Ruta para manejar la solicitud POST y activar el proceso de insercion de calificaciones

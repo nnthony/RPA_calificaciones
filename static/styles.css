@@ -27,6 +27,11 @@ h1 {
     margin-bottom: 20px;
 }
 
+h3 {
+    margin: 5px;
+    text-align: center;
+}
+
 .flash-messages {
     list-style-type: none;
     padding: 10px;
@@ -39,7 +44,7 @@ h1 {
 }
 
 .flash-messages li {
-    padding: 10px;
+    padding: 5px;
     color: #333;
 }
 
@@ -55,18 +60,23 @@ h1 {
     gap: 10px;
     padding: 10px;
     flex-wrap: wrap;
+    align-items: center
 }
 
-/* Columnas internas */
 .column {
-    padding: 20px;
-    flex: 1; /* Hace que cada columna ocupe el mismo espacio */
-    text-align: justify;
+    padding: 15px;
+    flex: 1; /* Puedes usar flex: 1 1 300px; para un ancho mínimo de 300px */
+    text-align: left;
+    min-width: 100px; /* Ajusta este valor según sea necesario */
+    max-width: 500px; /* Ajusta este valor según sea necesario */
+    background-color: #fff;
+    
 }
+
 
 form {
     width: 100%; /* Setea un ancho máximo del formulario */
-    max-width: 500px;
+    max-width: 550px;
     margin-bottom: 20px;
     background-color: #fff;
     padding: 20px;
