@@ -152,112 +152,48 @@ def upload_codes():
 def start_grading():
     if 't_evaluacion' in session:
         t_evaluacion = session['t_evaluacion']
-    # Cargar los archivos .py y realizar la ejecución de los códigos
-    files = os.listdir(app.config['EVAL_FOLDER'])
 
-    results = {}
-    for file in files:
-        if file.endswith('.py'):
-            student_id = file.split('.')[0]  # Obtener el ID del alumno a partir del nombre del archivo
-            exercise_num = int(request.form.get('exercise_number'))  # Ejercicio correspondiente
-            evaluations = extract_evaluation_data(exercise_num)
-            if 't_evaluacion' in session: # Recuperar el valor de la evaluación
-                t_evaluacion = session['t_evaluacion']
-            # Ejecutar el archivo .py del alumno
-            result = execute_code(file)
-            results[student_id] = result
-            print(result)
+        # Llamar a la función para calificar los ejercicios
+        grade_exercises(t_evaluacion)
+        flash('Calificaciones procesadas.')
 
-            insertar_eval(evaluations,exercise_num,result, student_id,file, t_evaluacion)
+        # Llamar a la función para el análisis de plagio
+        plagiarism_results = run_plagiarism_check(t_evaluacion)
 
-    flash('Calificaciones procesadas.')
-    return redirect(url_for('index'))
-
-# Analisis de plagio con jplag
-
-@app.route('/run_jplag', methods=['POST'])
-def run_jplag():
-    if 't_evaluacion' in session:  # Verifica si t_evaluacion está en la sesión
-        t_evaluacion = session['t_evaluacion']
-    
-    results = []  # Lista para almacenar los resultados de cada ejercicio
-
-    # Definir las carpetas a analizar
-    for i in range(1, 4):  # Para ejercicios 1, 2 y 3
-        command = [
-            'java', '-jar', 'jplag.jar', 
-            '-l', 'python3', 
-            '-s', f'./eval/{t_evaluacion}/{i}/', 
-            '-r', f'./eval/{t_evaluacion}/eval-results-{i}/'
-        ]
-        result = subprocess.run(command, capture_output=True, text=True)
-        output = result.stdout  # Salida del comando
-        
-        # Crear una lista para almacenar los resultados formateados para este ejercicio
-        comparisons = []
-        lines = output.splitlines()
-        
-        for line in lines:
-            if "Comparing" in line:
-                parts = line.split(":")
-                comparison = parts[0].replace("Comparing ", "").strip()
-                percentage = float(parts[1].strip())
-                
-                if percentage > 0:
-                    comparisons.append(f"Análisis entre {comparison}: {percentage:.1f}%")
-
-        results.append(comparisons)  # Agregar los resultados de este ejercicio
-
-    return render_template('index.html', results=results, t_evaluacion=t_evaluacion)
-
-
-
-# Ruta para manejar la solicitud POST y activar el proceso de insercion de calificaciones
-@app.route('/insertar_calificaciones', methods=['POST'])
-def insertar_calificaciones_ruta():
-
-    if 't_evaluacion' in session:  # Verifica si t_evaluacion está en la sesión
-        t_evaluacion = session['t_evaluacion']  # Recupera la evaluación guardada
-        insertar_calificaciones(t_evaluacion)  # Llama a la función de inserción
-        flash(f"Se insertó correctamente las notas de {t_evaluacion}")
-        return redirect(url_for('index'))  # Redirige a la página principal
+        # Llamar a la función para insertar calificaciones en la base de datos
+        insertar_calificaciones(t_evaluacion)
+        flash(f"Se insertaron correctamente las notas de {t_evaluacion} y se completó el análisis de plagio.")
+        session['plagiarism_results']=plagiarism_results
+        return render_template('index.html', plagiarism_results=plagiarism_results, t_evaluacion=t_evaluacion)
     else:
-        return "Error: No se encontró la evaluación en la sesión", 400  # Si no está en la sesión, muestra error
+        flash("Error: No se encontró la evaluación en la sesión.")
+        return redirect(url_for('index'))
 
 @app.route('/analisis',methods=['POST'])
 def analisis():
-    if 't_evaluacion' in session:  # Verifica si t_evaluacion está en la sesión
+    if ('t_evaluacion' in session):  # Verifica si t_evaluacion está en la sesión
         t_evaluacion = session['t_evaluacion']
+    if ('plagiarism_results' in session):
+        plagiarism_results = session['plagiarism_results']
     
-    numero_ejercicio = request.form.get('numero_ejercicio')
-    if not numero_ejercicio:
-        flash("Por favor, ingresa el número de ejercicio.")
-        return redirect(url_for('index'))
-    detalle = detalle_ej(t_evaluacion,numero_ejercicio)
+    
+    detalle = detalle_ej(t_evaluacion)
     session['detalle'] = detalle
-    if 'calificaciones' in session:
-        calificaciones = session['calificaciones']
-        return render_template('index.html', detalle=detalle, t_evaluacion=t_evaluacion, numero_ejercicio=numero_ejercicio, calificaciones=calificaciones)
-    else:
-        return render_template('index.html', detalle=detalle, t_evaluacion=t_evaluacion, numero_ejercicio=numero_ejercicio)
 
-    
-
-
-@app.route('/calificaciones', methods=['POST'])
-def mostrar_calificaciones():
-    if 't_evaluacion' in session:
-        t_evaluacion = session['t_evaluacion']
-    else:
-        return "Evaluación no especificada en la sesión", 400  # Error si no está en sesión
-    
     calificaciones = m_calificaciones(t_evaluacion)
     session['calificaciones'] = calificaciones
-    if 'detalle' in session:
-        detalle = session['detalle']
-        return render_template('index.html', calificaciones=calificaciones, t_evaluacion=t_evaluacion, detalle=detalle)
+
+    if 'calificaciones' in session and 'plagiarism_results' in session:
+        return render_template('index.html', detalle=detalle, t_evaluacion=t_evaluacion, calificaciones=calificaciones, plagiarism_results=plagiarism_results)
+    elif 'calificaciones' in session:
+        calificaciones = session['calificaciones']
+        return render_template('index.html', detalle=detalle, t_evaluacion=t_evaluacion, calificaciones=calificaciones)
+    elif 'plagiarism_results' in session:
+        return render_template('index.html', detalle=detalle, t_evaluacion=t_evaluacion, plagiarism_results=plagiarism_results)
     else:
-        return render_template('index.html', calificaciones=calificaciones, t_evaluacion=t_evaluacion)
+        return render_template('index.html', detalle=detalle, t_evaluacion=t_evaluacion)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

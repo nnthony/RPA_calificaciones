@@ -44,7 +44,8 @@ def almacenar_resultados(script):
 def insertar_eval(evaluations,exercise_num,result, student_id,file, t_evaluacion):
     for numero_ejercicio, enunciado, solucion in evaluations:
                 if numero_ejercicio == exercise_num:
-                    file_path = os.path.join(app.config['EVAL_FOLDER'], file)
+                    dir = f'eval/{t_evaluacion}/{exercise_num}/'
+                    file_path = os.path.join(dir, file)
                     with open(file_path, 'r') as f:
                         # Lee todo el contenido del archivo
                             contenido = f.read()
@@ -80,3 +81,46 @@ def insertar_eval(evaluations,exercise_num,result, student_id,file, t_evaluacion
                     # Retorna el puntaje calculado
                     almacenar_resultados(script)
                     print("8)")
+
+def grade_exercises(t_evaluacion):
+    results = {}
+    for exercise_num in range(1, 4):
+        dir = f'eval/{t_evaluacion}/{exercise_num}/'
+        files = os.listdir(dir)
+        for file in files:
+            if file.endswith('.py'):
+                student_id = file.split('.')[0]  # Obtener el ID del alumno a partir del nombre del archivo
+                # Suponiendo que tienes funciones `extract_evaluation_data` y `execute_code` ya definidas
+                evaluations = extract_evaluation_data(exercise_num)
+                result = execute_code(file)
+                results[student_id] = result
+                # Llama a insertar_eval para guardar los resultados en la base de datos
+                insertar_eval(evaluations, exercise_num, result, student_id, file, t_evaluacion)
+    return results
+
+def run_plagiarism_check(t_evaluacion):
+    plagiarism_results = []
+    for i in range(1, 4):  # Para ejercicios 1, 2 y 3
+        command = [
+            'java', '-jar', 'jplag.jar',
+            '-l', 'python3',
+            '-s', f'./eval/{t_evaluacion}/{i}/',
+            '-r', f'./eval/{t_evaluacion}/eval-results-{i}/'
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+        output = result.stdout
+
+        # Procesar los resultados de comparación
+        comparisons = []
+        lines = output.splitlines()
+        for line in lines:
+            if "Comparing" in line:
+                parts = line.split(":")
+                comparison = parts[0].replace("Comparing ", "").strip()
+                percentage = float(parts[1].strip())
+                if percentage > 0:
+                    comparisons.append(f"Análisis entre {comparison}: {percentage:.1f}%")
+
+        plagiarism_results.append(comparisons)
+
+    return plagiarism_results
