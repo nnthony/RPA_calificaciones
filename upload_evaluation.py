@@ -15,7 +15,7 @@ def extract_text_from_image(file_path):
 def store_evaluation_data(evals, enunciados, puntos ,soluciones):
     #Almacena los enunciados y soluciones procesados en la base de datos.
     cursor = mysql.connection.cursor()
-    
+    print("consulta SQL")
     for i, (eval, enunciado, punto ,solucion) in enumerate(zip(evals,enunciados, puntos ,soluciones)):
         query = """
         INSERT INTO evaluaciones (eval, numero_ejercicio, enunciado, puntos, solucion)

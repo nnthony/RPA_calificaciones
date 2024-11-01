@@ -33,10 +33,11 @@ def allowed_file(filename):
 # Página principal para seleccionar la evaluación
 @app.route('/')
 def index():
-    if 't_evaluacion' in session:  # Verifica si t_evaluacion está en la sesión
+    if 't_evaluacion' in session:  
         t_evaluacion = session['t_evaluacion']
         return render_template('index.html', t_evaluacion=t_evaluacion)
     else:
+        flash("No se pudo cargar la evaluación")
         return render_template('index.html')
 
 # Ruta para guardar el tipo de evaluación en la sesión
@@ -116,6 +117,7 @@ def upload_evaluation():
                 print("ocurró un error")
                 
     # Guardar las respuestas procesadas en la base de datos
+    print(evals,enunciados, puntos, soluciones)
     store_evaluation_data(evals, enunciados, puntos ,soluciones)
     flash('Evaluación cargada correctamente.')
     return redirect(url_for('index'))
