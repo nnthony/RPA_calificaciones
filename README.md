@@ -1,8 +1,6 @@
 # 🤖 RPA para Calificación Automatizada de Prácticas y Exámenes en Python
 
-![RPA Evaluation System](https://user-images.githubusercontent.com/placeholder-image.jpg)
-
-Este proyecto propone una solución de **Automatización Robótica de Procesos (RPA)** aplicada a la **calificación automática** de prácticas y exámenes en el curso de **Algoritmos y Estructuras de Datos en Python** en la Universidad Nacional de Ingeniería (UNI). 
+Este proyecto propone una solución de **Automatización Robótica de Procesos (RPA)** aplicada a la **calificación automática** de prácticas y exámenes en el curso de **Algoritmos y Estructuras de Datos en Python** 
 
 Mediante el uso de **OCR, Flask, GPT-4** y **JPlag**, se automatiza todo el proceso de revisión de ejercicios de programación, permitiendo una evaluación rápida, objetiva y detallada, con detección de plagio incluida.
 
@@ -78,23 +76,7 @@ Mediante el uso de **OCR, Flask, GPT-4** y **JPlag**, se automatiza todo el proc
 - Personalización avanzada de criterios por curso
 - Revisión manual asistida como opción secundaria
 
----
 
-## 👨‍💻 Autores
-
-- Anthony Alexis Calderón Pérez  
-- Jairo Kazuo del Río Gutiérrez  
-- John Kennedy Damian Cutisaca  
-📍 Universidad Nacional de Ingeniería – Perú  
-📆 LACCEI 2024 – San José, Costa Rica
-
----
-
-## 📜 Licencia
-
-Este proyecto es académico y no cuenta con una licencia pública activa. Uso autorizado exclusivamente con fines educativos.
-
----
 
 ## 📚 Citas y Referencias
 
