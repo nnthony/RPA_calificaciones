@@ -76,10 +76,3 @@ Mediante el uso de **OCR, Flask, GPT-4** y **JPlag**, se automatiza todo el proc
 - Personalización avanzada de criterios por curso
 - Revisión manual asistida como opción secundaria
 
-
-
-## 📚 Citas y Referencias
-
-Incluye revisión de literatura sobre RPA en educación, industria y servicios. Para detalles, ver sección de referencias del [artículo completo](#).
-
----
